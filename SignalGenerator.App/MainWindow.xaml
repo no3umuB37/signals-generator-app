@@ -1,0 +1,66 @@
+﻿<Window x:Class="SignalGenerator.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ScottPlot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
+        Title="SignalGenerator.App" Height="470" Width="1120" MinHeight="430" MinWidth="980">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" MinWidth="500"/>
+            <ColumnDefinition Width="2*" MinWidth="390"/>
+        </Grid.ColumnDefinitions>
+        <ScottPlot:WpfPlot x:Name="WpfPlot1" Grid.Column="0" Margin="0,0,10,0" />
+        <Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,0">
+            <Canvas Width="390" Height="377">
+                <TextBlock Canvas.Left="90" Canvas.Top="5" Text="Длина (с):" VerticalAlignment="Center"/>
+                <TextBox x:Name="len_textBox" Canvas.Left="148" Canvas.Top="4" Text="20" Width="27" Height="22"/>
+                <TextBlock Canvas.Left="185" Canvas.Top="8" Text="Частота (Гц):"/>
+                <TextBox x:Name="freq_textBox" Canvas.Left="259" Canvas.Top="5" Text="200" Width="28" Height="22"/>
+
+                <Button Canvas.Left="6" Canvas.Top="36" Content="Sin" Click="Button_Click_Sin" Width="72" Height="24"/>
+                <TextBlock Canvas.Left="82" Canvas.Top="38" Text="Период (с):" RenderTransformOrigin="0.342,0.479"/>
+                <TextBox x:Name="period_textBox" Canvas.Left="148" Canvas.Top="37" Text="1" Width="27" Height="22"/>
+                <TextBlock Canvas.Left="185" Canvas.Top="38" Text="Фаза (с):"/>
+                <TextBox x:Name="phase_textBox" Canvas.Left="235" Canvas.Top="38" Text="0" Width="28" Height="22"/>
+
+                <Button Canvas.Left="6" Canvas.Top="69" Content="Прямая" Click="Button_Click_Line" Width="72" Height="24"/>
+                <TextBlock Canvas.Left="85" Canvas.Top="70" Text="k:" RenderTransformOrigin="1.056,0.657"/>
+                <TextBox x:Name="k_textBox" Canvas.Left="98" Canvas.Top="69" Text="1" Width="27" Height="22" RenderTransformOrigin="0.363,0.741"/>
+                <TextBlock Canvas.Left="132" Canvas.Top="71" Text="b:"/>
+                <TextBox x:Name="b_textBox" Canvas.Left="147" Canvas.Top="69" Text="2" Width="28" Height="22"/>
+
+                <Button Canvas.Left="6" Canvas.Top="104" Content="Шум" Click="Button_Click_Noise" Width="72" Height="24"/>
+                <TextBlock Canvas.Left="82" Canvas.Top="108" Text="Амплитуда:"/>
+                <TextBox x:Name="Amplitude_textBox" Canvas.Left="147" Canvas.Top="107" Text="0.1" Width="28" Height="22"/>
+                <TextBlock Canvas.Left="270" Canvas.Top="39" Text="Масштаб:"/>
+                <TextBox x:Name="scale_textBox" Canvas.Left="328" Canvas.Top="39" Text="1" Width="28" Height="22"/>
+
+                <Button Canvas.Left="6" Canvas.Top="238" Content="Фильтр офлайн" Click="Button_Click_Offline" Width="99" Height="24"/>
+                <TextBlock Canvas.Left="110" Canvas.Top="241" Text="Окно (с):"/>
+                <TextBox x:Name="Window_textBox" Canvas.Left="163" Canvas.Top="240" Text="0.2" Width="33" Height="22"/>
+                <Button Canvas.Left="202" Canvas.Top="238" Content="Фильтр онлайн" Click="Button_Click_Online" Width="112" Height="24"/>
+
+                <Button Canvas.Left="7" Canvas.Top="275" Content="Зашкалы" Click="Button_Click_CutUpAndDown" Width="63" Height="24">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Анализировать выходы" Click="Button_AnalyzeRange"/>
+                            <MenuItem Header="Сохранить разметку" Click="Button_SaveAnnotations"/>
+                            <MenuItem Header="Загрузить разметку" Click="Button_LoadAnnotations"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <TextBlock Canvas.Left="78" Canvas.Top="279" Text="Мин:"/>
+                <TextBox x:Name="downCut_textBox" Canvas.Left="110" Canvas.Top="277" Text="-0.2" Width="36" Height="22"/>
+                <TextBlock Canvas.Left="160" Canvas.Top="279" Text="Макс:"/>
+                <TextBox x:Name="upCut_textBox" Canvas.Left="197" Canvas.Top="277" Text="0.8" Width="33" Height="22"/>
+
+                <Button Canvas.Left="8" Canvas.Top="309" Content="Сумма" Click="Button_Click_Summ" Width="62" Height="24"/>
+                <Button Canvas.Left="78" Canvas.Top="309" Content="Склейка" Click="Button_Click_Concat" Width="68" Height="24"/>
+
+                <Button Canvas.Left="8" Canvas.Top="343" Content="Сброс" Click="Button_Clear" Width="62" Height="24"/>
+                <Button Canvas.Left="78" Canvas.Top="343" Content="Удалить" Click="Button_Click_Remove" Width="68" Height="24"/>
+                <Button Canvas.Left="154" Canvas.Top="343" Content="Загрузить" Click="Button_Load" Width="76" Height="24"/>
+                <Button Canvas.Left="238" Canvas.Top="343" Content="Сохранить" Click="Button_Write" Width="76" Height="24"/>
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</Window>
