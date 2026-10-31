@@ -55,6 +55,15 @@
 
                 <Button Canvas.Left="8" Canvas.Top="309" Content="Сумма" Click="Button_Click_Summ" Width="62" Height="24"/>
                 <Button Canvas.Left="78" Canvas.Top="309" Content="Склейка" Click="Button_Click_Concat" Width="68" Height="24"/>
+                <Button Canvas.Left="154" Canvas.Top="309" Content="Изменить частоту" Click="Button_Click_Resample" Width="118" Height="24"/>
+                <TextBlock Canvas.Left="278" Canvas.Top="313" Text="Новая (Гц):"/>
+                <TextBox x:Name="newFreq_textBox" Canvas.Left="344" Canvas.Top="311" Text="50" Width="40" Height="22"/>
+
+                <TextBlock Canvas.Left="330" Canvas.Top="241" Text="Тип:"/>
+                <ComboBox x:Name="filterType_comboBox" Canvas.Left="358" Canvas.Top="239" Width="130" Height="22" SelectedIndex="0">
+                    <ComboBoxItem Content="Скользящее среднее"/>
+                    <ComboBoxItem Content="Медиана"/>
+                </ComboBox>
 
                 <Button Canvas.Left="8" Canvas.Top="343" Content="Сброс" Click="Button_Clear" Width="62" Height="24"/>
                 <Button Canvas.Left="78" Canvas.Top="343" Content="Удалить" Click="Button_Click_Remove" Width="68" Height="24"/>
