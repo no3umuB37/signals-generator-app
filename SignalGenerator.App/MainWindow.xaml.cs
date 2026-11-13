@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SignalGenerator.App
 {
@@ -19,6 +20,8 @@ namespace SignalGenerator.App
         public MainWindow()
         {
             InitializeComponent();
+            signalType_comboBox.ItemsSource = Enum.GetValues(typeof(SignalType));
+            signalType_comboBox.SelectedIndex = 0;
         }
 
         private void addSignal(SingleChannelSignal signal)
@@ -43,14 +46,167 @@ namespace SignalGenerator.App
             }
         }
 
-        private void Button_Click_Sin(object sender, RoutedEventArgs e) => RunAction(() =>
-            addSignal(Tools.Sin(ReadFloat(len_textBox.Text), ReadFloat(freq_textBox.Text), ReadFloat(period_textBox.Text), ReadFloat(phase_textBox.Text), ReadFloat(scale_textBox.Text))));
+        // Читает число из поля ввода. Если текст не является числом,
+        // показывает сообщение и возвращает false.
+        private bool TryReadFloat(TextBox textBox, string fieldName, out float value)
+        {
+            if (!float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            {
+                MessageBox.Show("Поле «" + fieldName + "» должно содержать число.",
+                    "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            return true;
+        }
 
-        private void Button_Click_Line(object sender, RoutedEventArgs e) => RunAction(() =>
-            addSignal(Tools.Line(ReadFloat(len_textBox.Text), ReadFloat(freq_textBox.Text), ReadFloat(k_textBox.Text), ReadFloat(b_textBox.Text))));
+        private SignalType GetSelectedSignalType()
+        {
+            return (SignalType)signalType_comboBox.SelectedItem;
+        }
 
-        private void Button_Click_Noise(object sender, RoutedEventArgs e) => RunAction(() =>
-            addSignal(Tools.Noise(ReadFloat(len_textBox.Text), ReadFloat(freq_textBox.Text), ReadFloat(Amplitude_textBox.Text))));
+        // Переключает видимость панелей параметров: видна панель выбранного типа.
+        private void SignalType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sinePanel == null)
+                return;
+
+            sinePanel.Visibility = Visibility.Collapsed;
+            linePanel.Visibility = Visibility.Collapsed;
+            noisePanel.Visibility = Visibility.Collapsed;
+            squarePanel.Visibility = Visibility.Collapsed;
+            sawPanel.Visibility = Visibility.Collapsed;
+            trianglePanel.Visibility = Visibility.Collapsed;
+            constantPanel.Visibility = Visibility.Collapsed;
+
+            switch (GetSelectedSignalType())
+            {
+                case SignalType.Sine:
+                    sinePanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Line:
+                    linePanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Noise:
+                    noisePanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Square:
+                    squarePanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Saw:
+                    sawPanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Triangle:
+                    trianglePanel.Visibility = Visibility.Visible;
+                    break;
+                case SignalType.Constant:
+                    constantPanel.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
+
+        // Собирает объект параметров по выбранному типу сигнала.
+        // Возвращает null, если ввод некорректен.
+        private GeneratorParameters ReadParameters(SignalType type)
+        {
+            switch (type)
+            {
+                case SignalType.Sine:
+                    {
+                        float period, phase, amplitude;
+                        if (!TryReadFloat(sinePeriod_textBox, "Период", out period))
+                            return null;
+                        if (!TryReadFloat(sinePhase_textBox, "Фаза", out phase))
+                            return null;
+                        if (!TryReadFloat(sineAmplitude_textBox, "Амплитуда", out amplitude))
+                            return null;
+                        return new SineParameters { Period = period, Phase = phase, Amplitude = amplitude };
+                    }
+
+                case SignalType.Line:
+                    {
+                        float k, b;
+                        if (!TryReadFloat(lineK_textBox, "k", out k))
+                            return null;
+                        if (!TryReadFloat(lineB_textBox, "b", out b))
+                            return null;
+                        return new LineParameters { K = k, B = b };
+                    }
+
+                case SignalType.Noise:
+                    {
+                        float range;
+                        if (!TryReadFloat(noiseRange_textBox, "Размах", out range))
+                            return null;
+                        return new NoiseParameters { Range = range };
+                    }
+
+                case SignalType.Square:
+                    {
+                        float period, phase, amplitude, duty;
+                        if (!TryReadFloat(squarePeriod_textBox, "Период", out period))
+                            return null;
+                        if (!TryReadFloat(squarePhase_textBox, "Фаза", out phase))
+                            return null;
+                        if (!TryReadFloat(squareAmplitude_textBox, "Амплитуда", out amplitude))
+                            return null;
+                        if (!TryReadFloat(squareDuty_textBox, "Скважность", out duty))
+                            return null;
+                        return new SquareParameters { Period = period, Phase = phase, Amplitude = amplitude, DutyCycle = duty };
+                    }
+
+                case SignalType.Saw:
+                    {
+                        float period, phase, amplitude;
+                        if (!TryReadFloat(sawPeriod_textBox, "Период", out period))
+                            return null;
+                        if (!TryReadFloat(sawPhase_textBox, "Фаза", out phase))
+                            return null;
+                        if (!TryReadFloat(sawAmplitude_textBox, "Амплитуда", out amplitude))
+                            return null;
+                        return new SawParameters { Period = period, Phase = phase, Amplitude = amplitude };
+                    }
+
+                case SignalType.Triangle:
+                    {
+                        float period, phase, amplitude;
+                        if (!TryReadFloat(trianglePeriod_textBox, "Период", out period))
+                            return null;
+                        if (!TryReadFloat(trianglePhase_textBox, "Фаза", out phase))
+                            return null;
+                        if (!TryReadFloat(triangleAmplitude_textBox, "Амплитуда", out amplitude))
+                            return null;
+                        return new TriangleParameters { Period = period, Phase = phase, Amplitude = amplitude };
+                    }
+
+                case SignalType.Constant:
+                    {
+                        float value;
+                        if (!TryReadFloat(constantValue_textBox, "Значение", out value))
+                            return null;
+                        return new ConstantParameters { Value = value };
+                    }
+
+                default:
+                    return null;
+            }
+        }
+
+        private void Button_Click_Generate(object sender, RoutedEventArgs e) => RunAction(() =>
+        {
+            float samplingRate, duration;
+            if (!TryReadFloat(freq_textBox, "Частота", out samplingRate))
+                return;
+            if (!TryReadFloat(len_textBox, "Длина", out duration))
+                return;
+
+            GeneratorParameters parameters = ReadParameters(GetSelectedSignalType());
+            if (parameters == null)
+                return;
+
+            ISignalGenerator generator = SignalGeneratorFactory.Create(parameters);
+            SingleChannelSignal signal = generator.Generate(new SamplingParameters(samplingRate, duration));
+            addSignal(signal);
+        });
 
         private void Button_Clear(object sender, RoutedEventArgs e)
         {
